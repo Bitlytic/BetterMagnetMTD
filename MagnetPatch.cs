@@ -18,7 +18,6 @@ namespace BetterMagnetPlugin
     {
         static ManualLogSource logSource = new ManualLogSource("BetterMagnetPlugin");
 
-        static PlayerController player;
         static GameController gameController;
 
         [HarmonyPatch(typeof(PlayerController), "Start")]
@@ -47,7 +46,7 @@ namespace BetterMagnetPlugin
                     continue;
                 }
 
-                Vector3 direction = player.transform.position - xpPickup.transform.position;
+                Vector3 direction = __instance.transform.position - xpPickup.transform.position;
                 direction /= direction.sqrMagnitude;
 
                 if (direction.magnitude < 0.05f)
@@ -79,11 +78,14 @@ namespace BetterMagnetPlugin
         [HarmonyPatch(typeof(PowerupDescription), "Refresh")]
         [HarmonyPostfix]
         static void PowerupGeneratorConstructor(PowerupDescription __instance)
-        {
-            if (__instance.data.nameStringID.key == "excitement_name")
+        { 
+            if (__instance.data)
             {
-                // Replace the default text by the most hacky thing I could think of
-                textFieldRef(__instance).SetText("Pickup Range <color=#f5d6c1>+20%</color><br>After picking up XP, gain <color=#f5d6c1>35%</color> Fire Rate for <color=#f5d6c1>1</color> second.<br>Every <color=#f5d6c1>40 seconds</color>, pull all XP on the ground toward you.");
+                if (__instance.data.nameString == "Excitement")
+                {
+                    //Replace the default text by the most hacky thing I could think of
+                    textFieldRef(__instance).SetText("Pickup Range <color=#f5d6c1>+20%</color><br>After picking up XP, gain <color=#f5d6c1>35%</color> Fire Rate for <color=#f5d6c1>1</color> second.<br>Every <color=#f5d6c1>40 seconds</color>, pull all XP on the ground toward you.");
+                }
             }
         }
 
